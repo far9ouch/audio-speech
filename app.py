@@ -2,16 +2,20 @@ from flask import Flask, render_template, request, send_file, jsonify
 from zyphra import ZyphraClient
 import os
 from io import BytesIO
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
-
-# Configure API key from environment variable
-ZYPHRA_API_KEY = os.getenv('ZYPHRA_API_KEY', "zsk-a1ba7ed9cbc0a52d5f2b52ad99a1d8a5f786ef186d20862b535caad525b3f6f4")
 
 # Configure environment
 app.config['ENV'] = os.getenv('FLASK_ENV', 'production')
 app.config['DEBUG'] = False if app.config['ENV'] == 'production' else True
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-here')
+
+# Configure API key
+ZYPHRA_API_KEY = os.getenv('ZYPHRA_API_KEY')
 
 @app.route('/', methods=['GET', 'POST'])
 def index():

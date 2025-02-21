@@ -40,4 +40,8 @@ Thumbs.db
 .env.local
 
 # Logs
-*.log 
+*.log
+
+# Add these lines
+netlify.env
+.netlify 
