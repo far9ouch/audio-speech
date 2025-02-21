@@ -16,7 +16,7 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.9'
+        python-version: '3.9.0'
         
     - name: Setup Node.js
       uses: actions/setup-node@v2
@@ -30,7 +30,12 @@ jobs:
         npm install
         
     - name: Build
-      run: npm run build
+      env:
+        FLASK_ENV: production
+        ZYPHRA_API_KEY: ${{ secrets.ZYPHRA_API_KEY }}
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
         
     - name: Deploy to Netlify
       uses: netlify/actions/cli@master
