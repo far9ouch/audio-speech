@@ -12,26 +12,19 @@ git config --global user.name "%GITHUB_USERNAME%"
 git config --global user.email "%GITHUB_EMAIL%"
 
 echo.
-echo Adding modified files...
+echo Adding configuration files...
+git add .python-version
+git add netlify.config.js
+git add runtime.txt
 git add .github/workflows/deploy.yml
-git add .gitignore
-git add app.py
 git add netlify.toml
-git add requirements.txt
-git add static/style.css
-git add update.bat
-
-echo.
-echo Adding new files...
-git add .env.example
-git add Procfile
-git add deploy.bat
-git add netlify/
 git add package.json
-git add schedule_update.bat
-git add setup.bat
+git add requirements.txt
 git add setup.py
-git add static/netlify.js
+git add netlify.sh
+
+:: Make netlify.sh executable
+git update-index --chmod=+x netlify.sh
 
 echo.
 echo Current status:
@@ -39,7 +32,7 @@ git status
 
 echo.
 set /p COMMIT_MSG="Enter commit message (or press Enter for default): "
-if "%COMMIT_MSG%"=="" set COMMIT_MSG="Update project structure and deployment configuration"
+if "%COMMIT_MSG%"=="" set COMMIT_MSG="Fix Python installation in Netlify build"
 
 :: Commit changes
 git commit -m "%COMMIT_MSG%"
