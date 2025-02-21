@@ -4,7 +4,7 @@
   "description": "AUDAA Text-to-Speech Service",
   "engines": {
     "node": "14.x",
-    "python": "3.9.0"
+    "python": "3.9.16"
   },
   "main": "index.js",
   "scripts": {

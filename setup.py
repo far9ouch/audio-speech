@@ -5,7 +5,7 @@ setup(
     version="1.0.0",
     packages=find_packages(),
     include_package_data=True,
-    python_requires='>=3.9.0',
+    python_requires='>=3.9.16',
     install_requires=[
         'flask==2.0.1',
         'gunicorn==20.1.0',
