@@ -112,7 +112,48 @@
             document.querySelector('.range-value').textContent = e.target.value;
         });
 
-        // Preview functionality
+        // Configure API endpoints
+        const isGitHubPages = window.location.hostname.includes('github.io');
+        const API_BASE = isGitHubPages 
+            ? 'https://api.zyphra.com/v1/audio'
+            : '/api';
+
+        // Update form submission
+        document.getElementById('ttsForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch(`${API_BASE}/text-to-speech`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': 'zsk-a1ba7ed9cbc0a52d5f2b52ad99a1d8a5f786ef186d20862b535caad525b3f6f4'
+                    },
+                    body: JSON.stringify({
+                        text: formData.get('text'),
+                        language_iso_code: formData.get('language'),
+                        speaking_rate: parseFloat(formData.get('speaking_rate')),
+                        mime_type: `audio/${formData.get('format')}`
+                    })
+                });
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `AUDAA_speech.${formData.get('format')}`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } catch (error) {
+                alert('Error generating speech: ' + error);
+            }
+        });
+
+        // Update preview functionality
         document.getElementById('previewBtn').addEventListener('click', async function() {
             const text = document.getElementById('text').value;
             const language = document.getElementById('language').value;
@@ -127,24 +168,26 @@
             this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
 
             try {
-                const response = await fetch('/api/preview', {
+                const response = await fetch(`${API_BASE}/text-to-speech`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-API-Key': 'zsk-a1ba7ed9cbc0a52d5f2b52ad99a1d8a5f786ef186d20862b535caad525b3f6f4'
                     },
-                    body: JSON.stringify({ text, language, speaking_rate })
+                    body: JSON.stringify({
+                        text: text.slice(0, 100) + (text.length > 100 ? '...' : ''),
+                        language_iso_code: language,
+                        speaking_rate: parseFloat(speaking_rate),
+                        mime_type: 'audio/mp3'
+                    })
                 });
 
-                const data = await response.json();
-                
-                if (data.success) {
-                    const audio = document.getElementById('audioPreview');
-                    audio.src = `data:audio/mp3;base64,${data.audio}`;
-                    document.getElementById('previewPlayer').style.display = 'block';
-                    audio.play();
-                } else {
-                    alert('Preview generation failed: ' + data.error);
-                }
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const audio = document.getElementById('audioPreview');
+                audio.src = url;
+                document.getElementById('previewPlayer').style.display = 'block';
+                audio.play();
             } catch (error) {
                 alert('Error generating preview: ' + error);
             }
